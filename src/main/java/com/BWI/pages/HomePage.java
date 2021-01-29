@@ -5,13 +5,16 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
+/**
+ *  This page is used for Initization of all homepage elements.
+ * author=Chandana
+ *
+ */
 public class HomePage extends BasePage {
-
-    private WebElement Autosuggestive;
-
 
     public HomePage() {
         PageFactory.initElements(driver, this);
@@ -21,13 +24,13 @@ public class HomePage extends BasePage {
     private WebElement destinationInputTextBox;
 
     @FindBy(css = "input#checkin")
-    private WebElement checkin;
+    private WebElement checkIn;
 
     @FindBy(css = "td[data-handler='selectDay']")
-    private List<WebElement> checkindates;
+    private List<WebElement> checkInDates;
 
     @FindBy(css = ".ui-datepicker-month")
-    private WebElement checkinmonth;
+    private WebElement checkInMonth;
 
     @FindBy(css = ".ui-datepicker-next.ui-corner-all")
     private WebElement next;
@@ -36,104 +39,87 @@ public class HomePage extends BasePage {
     private WebElement checkout;
 
     @FindBy(css = "td[data-handler='selectDay']")
-    private List<WebElement> checkoutdates;
+    private List<WebElement> checkOutDates;
 
     @FindBy(css = ".ui-datepicker-month")
-    private WebElement checkoutmonth;
+    private WebElement checkOutMonth;
 
     @FindBy(css = ".ui-datepicker-next.ui-corner-all")
-    private WebElement checkoutnext;
+    private WebElement checkOutNext;
 
-    //onetrust-accept-btn-handler
     @FindBy(id = "onetrust-accept-btn-handler")
     private WebElement accept;
 
     @FindBy(id = "btn-modify-stay-update")
-    private WebElement findmyhotelbutton;
+    private WebElement findMyHotelButton;
 
     public String homePageTitle(){
        return driver.getTitle();
     }
 
-    public String enterDestinationInput(String destination) {
+    public void enterDestinationInput(String destination) {
         destinationInputTextBox.clear();
         destinationInputTextBox.sendKeys(destination);
+        WebElement autoSuggestiveDestination;
 
         try{
-            WebElement autosuggestivedestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
+             autoSuggestiveDestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
 
-            autosuggestivedestination.click();
+            autoSuggestiveDestination.click();
 
         }catch(StaleElementReferenceException e) {
-            WebElement autosuggestivedestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
-            autosuggestivedestination.click();
+             autoSuggestiveDestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
+            autoSuggestiveDestination.click();
         }
-        return destinationInputTextBox.getText();
+
 
 
     }
     
-    public WebElement ClickOnCheckIn() {
-        checkin.click();
-        return checkin;
+    public void ClickOnCheckIn() {
+        checkIn.click();
     }
 
     public void selectMonth(String month)  {
-       while(!checkinmonth.getText().contains(month)) {
-           try {
-               Thread.sleep(2000);
+        //click on next until you get desired month
+       while(!checkInMonth.getText().contains(month)) {
+            wait.until(ExpectedConditions.elementToBeClickable(next));
                next.click();
-           }catch(StaleElementReferenceException | InterruptedException e){
-               next.click();
-           }
+          // }
        }
     }
-    public void selectdate(String date) {
-        //Grab common attribute//Put into list and iterate
-  /*      try{
-            for(WebElement day: checkindates) {
-                if (day.getText().equals(date)) {
-                    day.click();
-                }
-            }
-        }catch(StaleElementReferenceException e){
-        for(WebElement day: checkindates){
-           if( day.getText().equals(date)) {
-               day.click();
-           }
-           }*/
 
-
-       int checkindatesize = checkindates.size();
-       for (int i = 0; i < checkindatesize; i++) {
-            String text = checkindates.get(i).getText();
+    public void selectDate(String date) {
+        //Grab common attribute ,Put into list and iterate for seleting date
+       int checkInDateSize = checkInDates.size();
+       for (int i = 0; i < checkInDateSize; i++) {
+            String text = checkInDates.get(i).getText();
             if (text.equalsIgnoreCase(date)) {
-                checkindates.get(i).click();
+                checkInDates.get(i).click();
                 break;
             }
         }
     }
 
-    //checkout
-    public WebElement clickOnCheckout(){
-        try{
 
+    public void clickOnCheckOut(){
+            wait.until(ExpectedConditions.elementToBeClickable(checkout));
             checkout.click();
-        }
-        catch(StaleElementReferenceException e){
-            checkout.click();
-        }
-        return checkout;
-
     }
+
     public void clickOnAccept() {
+        wait.until(ExpectedConditions.elementToBeClickable(checkout));
         accept.click();
 
     }
 
-    public WebElement findmyhotel() {
-       return findmyhotelbutton;
+    public String getHotelName() {
+        return findMyHotelButton.getText();
     }
 
+    public void clickOnFindMyHotel() {
+        wait.until(ExpectedConditions.elementToBeClickable(checkout));
+        findMyHotelButton.click();
+    }
 
 }

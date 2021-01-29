@@ -1,63 +1,59 @@
 package com.BWI.testcases;
-
 import com.BWI.pages.BasePage;
 import com.BWI.pages.HomePage;
 import com.BWI.pages.Reusable;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+
+/**
+ *  This page is used to writing testcase for homepage
+ * author=Chandana
+ *
+ */
 public class HomePageTest extends BasePage {
-    public static String  destinationinputdata;
-    public String checkindate;
-    public String checkoutdate;
-    String sheetName = "InputData";
-    //UpdateInputData
-
-
+    String sheetName = "Data";
+    HomePage homepage;
+    Reusable reusable;
     public HomePageTest() {
         super();
     }
-    HomePage homepage;
 
-    @DataProvider
+
+    @DataProvider(name="getBWITestData",indices = {0})
     public Object[][] getBWITestData(){
         Object data[][] = Reusable.getTestData(sheetName);
         return data;
     }
+
+
     @Test(priority = 0,dataProvider="getBWITestData")
-    public void BWITestmethod(String destination,String CheckinDate, String CheckoutDate) {
-        String[] CheckinDate1= Reusable.splitfunction(CheckinDate);
-        String[] CheckoutDate1= Reusable.splitfunction(CheckoutDate);
-        HomePage.initialize();
-        wait.until(
-                webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
+    public void BWITestMethod(String destination, String checkInDate, String checkOutDate) {
+
+        String[] CheckinDate1= Reusable.splitFunction(checkInDate);
+        String[] CheckoutDate1= Reusable.splitFunction(checkOutDate);
+       // HomePage.initialize();
         homepage = new HomePage();
+        reusable = new Reusable();
         String getTitle= homepage.homePageTitle();
-
         Assert.assertEquals(getTitle,"Book Direct at Best Western Hotels & Resorts");
-        destinationinputdata= homepage.enterDestinationInput(destination);
-
-        WebElement checkinDatefield = homepage.ClickOnCheckIn();
-       checkindate=checkinDatefield.getText();
+        homepage.enterDestinationInput(destination);
+        homepage.ClickOnCheckIn();
         homepage.selectMonth(CheckinDate1[1]);
-        homepage.selectdate(CheckinDate1[0]);
-
-        WebElement checkoutdatefield = homepage.clickOnCheckout();
-        checkoutdate=checkoutdatefield.getText();
+        homepage.selectDate(CheckinDate1[0]);
+        homepage.clickOnCheckOut();
         homepage.selectMonth(CheckoutDate1[1]);
-        homepage.selectdate(CheckoutDate1[0]);
-        String testoffindmyhotel = homepage.findmyhotel().getText();
+        homepage.selectDate(CheckoutDate1[0]);
         homepage.clickOnAccept();
 
-        Assert.assertEquals(testoffindmyhotel,"FIND MY HOTEL");
+        String testOfFindMyHotel = homepage.getHotelName();
+        Assert.assertEquals(testOfFindMyHotel,"FIND MY HOTEL");
 
-        homepage.findmyhotel().click();
+        homepage.clickOnFindMyHotel();
+        reusable.waitTillDocumentLoads();
+        reusable.verifyDestinationAndDates(destination,checkInDate,checkOutDate);
+
 
 
 

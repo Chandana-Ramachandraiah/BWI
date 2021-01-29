@@ -1,53 +1,57 @@
 package com.BWI.pages;
 
-import com.BWI.utils.WebEventListener;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.openqa.selenium.support.events.WebDriverEventListener;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.GuiceHelper;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.asserts.SoftAssert;
-
+import org.apache.log4j.Logger;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-public class BasePage {
+/**
+ *  This page is used for driver  and passing url
+ * author=Chandana
+ *
+ */
+
+public class BasePage  {
     public static WebDriver driver;
     public static Properties prop;
-    public  static EventFiringWebDriver e_driver;
     public  static WebDriverWait wait;
-    public static SoftAssert softassertion;
-    //public static WebDriverEventListener eventListener;
+    public static SoftAssert softAssertion;
 
 
     public  BasePage() {
+
+        //Take data from Properties File
         try {
             prop = new Properties();
             FileInputStream ip = new FileInputStream("C://Users//cramachandraia//IdeaProjects//com.BestWestern//BWI//src//main//resources//Configurations.properties");
             prop.load(ip);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void initialize() {
+
+    @BeforeTest
+    //.static void
+    public void initialize() {
+        //Initialize particular browser url according to the data given in Properties file
         String browserName = prop.getProperty("browser");
 
-        System.out.println(prop.getProperty("browser"));
-        softassertion = new SoftAssert();
+        prop.getProperty("browser");
+        softAssertion = new SoftAssert();
 
         if (browserName.equals("chrome")) {
-            System.setProperty("webdriver.chrome.driver","D://Selenium//chromedriver.exe");
+            System.setProperty("webdriver.chrome.driver",".//src//main//resources//driver//chromedriver.exe");
             driver = new ChromeDriver();
         } else if (browserName.equals("ff")) {
 
@@ -57,22 +61,22 @@ public class BasePage {
             System.out.println("Browser not found");
         }
 
-      /*  e_driver = new EventFiringWebDriver(driver);
-        // Now create object of EventListerHandler to register it with EventFiringWebDriver
-        eventListener = new WebEventListener();
-        e_driver.register(eventListener);
-        driver = e_driver;
-*/
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-        driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(360, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
         wait =new WebDriverWait(driver,50);
 
+        //and give url according to the data given in Properties file
         driver.get(prop.getProperty("url"));
 
-        System.out.println(prop.getProperty("url"));
+    }
 
+    @AfterTest
+    public void tearDown()
+    {
+        driver.close();
+        driver.quit();
     }
 
 
