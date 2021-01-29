@@ -11,9 +11,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- *  This page is used to writing testcase for HotelSearchPage
- * @author=Chandana
- *
+ * @author Chandana
+ * @version 1.0
+ * @since 28-01-2021
  */
 public class HotelSearchPageTest extends  HomePageTest {
     HotelSearchPage hotelSearch;
@@ -44,11 +44,10 @@ public class HotelSearchPageTest extends  HomePageTest {
         homePage = new HomePage();
         reusable = new Reusable();
 
-        //Verifing the title
+        //Verifying the title
         String titleOfPage=hotelSearch.getTitle();
         Assert.assertEquals(titleOfPage,"Search Best Western Hotels & Resorts");
         //verify cards are present
-
         int count=hotelSearch.getHotelSearchCards();
         if (count>0) {
             System.out.println("Hotel Cards Displayed");
@@ -63,7 +62,7 @@ public class HotelSearchPageTest extends  HomePageTest {
        homePage.ClickOnCheckIn();
         homePage.selectMonth(CheckinDate1[1]);
         homePage.selectDate(CheckinDate1[0]);
-        //select date for checkin
+        //select date for checkout
          homePage.clickOnCheckOut();
         homePage.selectMonth(CheckoutDate1[1]);
         homePage.selectDate(CheckoutDate1[0]);
@@ -90,15 +89,7 @@ public class HotelSearchPageTest extends  HomePageTest {
         //See Response body
 
         String responseBody= response.getBody().asString();
-
-       /* // parsing file "JSONExample.json"
-        Object obj = new JSONParser().parse(new FileReader("response.getBody()"));
-
-        // typecasting obj to JSONObject
-        JSONObject jo = (JSONObject) obj;
-        JsonPath j1= new JsonPath(response.getBody());*/
-
-        //Get values from Response
+        System.out.println(responseBody);
         int statusCode= response.getStatusCode();
        System.out.println("Response code is "+ statusCode);
 

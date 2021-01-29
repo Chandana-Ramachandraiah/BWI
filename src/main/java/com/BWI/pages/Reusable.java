@@ -7,7 +7,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.JavascriptExecutor;
-
+/**
+ *  This is helper class
+ * @author Chandana
+ * @version 1.0
+ * @since 28-01-2021
+ */
 public class Reusable extends BasePage {
     public static String TESTDATA_SHEET_PATH = "C://Users//cramachandraia//IdeaProjects//com.BestWestern//BWI//src//test//TestData.xlsx";
 

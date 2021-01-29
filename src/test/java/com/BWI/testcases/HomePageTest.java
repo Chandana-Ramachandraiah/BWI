@@ -9,8 +9,9 @@ import org.testng.annotations.Test;
 
 /**
  *  This page is used to writing testcase for homepage
- * author=Chandana
- *
+ * @author Chandana
+ * @version 1.0
+ * @since 28-01-2021
  */
 public class HomePageTest extends BasePage {
     String sheetName = "Data";
@@ -20,13 +21,11 @@ public class HomePageTest extends BasePage {
         super();
     }
 
-
     @DataProvider(name="getBWITestData",indices = {0})
     public Object[][] getBWITestData(){
         Object data[][] = Reusable.getTestData(sheetName);
         return data;
     }
-
 
     @Test(priority = 0,dataProvider="getBWITestData")
     public void BWITestMethod(String destination, String checkInDate, String checkOutDate) {
@@ -46,10 +45,8 @@ public class HomePageTest extends BasePage {
         homepage.selectMonth(CheckoutDate1[1]);
         homepage.selectDate(CheckoutDate1[0]);
         homepage.clickOnAccept();
-
         String testOfFindMyHotel = homepage.getHotelName();
         Assert.assertEquals(testOfFindMyHotel,"FIND MY HOTEL");
-
         homepage.clickOnFindMyHotel();
         reusable.waitTillDocumentLoads();
         reusable.verifyDestinationAndDates(destination,checkInDate,checkOutDate);

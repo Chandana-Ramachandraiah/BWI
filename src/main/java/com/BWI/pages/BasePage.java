@@ -65,7 +65,7 @@ public class BasePage  {
         driver.manage().deleteAllCookies();
         driver.manage().timeouts().pageLoadTimeout(360, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
-        wait =new WebDriverWait(driver,50);
+        wait =new WebDriverWait(driver,120);
 
         //and give url according to the data given in Properties file
         driver.get(prop.getProperty("url"));
