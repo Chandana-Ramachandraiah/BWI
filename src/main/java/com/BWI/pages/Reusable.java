@@ -6,6 +6,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.openqa.selenium.JavascriptExecutor;
 
 public class Reusable extends BasePage {
     public static String TESTDATA_SHEET_PATH = "C://Users//cramachandraia//IdeaProjects//com.BestWestern//BWI//src//test//TestData.xlsx";
@@ -29,20 +30,16 @@ public class Reusable extends BasePage {
         }
         sheet = book.getSheet(sheetName);
         Object[][] data = new Object[sheet.getLastRowNum()][sheet.getRow(0).getLastCellNum()];
-        // System.out.println(sheet.getLastRowNum() + "--------" +
-        // sheet.getRow(0).getLastCellNum());
         for (int i = 0; i < sheet.getLastRowNum(); i++) {
             for (int k = 0; k < sheet.getRow(0).getLastCellNum(); k++) {
                 data[i][k] = sheet.getRow(i + 1).getCell(k).toString();
-                // System.out.println(data[i][k]);
             }
         }
         return data;
     }
 
     public static String[] splitFunction(String splitDate){
-        String strMain = splitDate;
-        String[] arrSplit = strMain.split("-");
+        String[] arrSplit = splitDate.split("-");
         for (int i=0; i < arrSplit.length; i++)
         {
             System.out.println(arrSplit[i]);
@@ -63,11 +60,14 @@ public class Reusable extends BasePage {
         String destinationSummary = hotelSearch.destinationSummary();
         softAssertion.assertEquals(destinationSummary, destination);
 
-        String summaryCheckin = hotelSearch.getSummaryCheckin().getText();
+        String summaryCheckin = hotelSearch.getSummaryCheckin();
         softAssertion.assertEquals(summaryCheckin, CheckInDate);
 
-
-        String summaryCheckout = hotelSearch.getSummaryCheckOut().getText();
+        String summaryCheckout = hotelSearch.getSummaryCheckOut();
         softAssertion.assertEquals(summaryCheckout, CheckOutDate);
+    }
+    
+    public void waitTillDocumentLoads(){
+        wait.until( webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
     }
 }

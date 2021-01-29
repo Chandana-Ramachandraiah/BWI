@@ -1,16 +1,25 @@
 package com.BWI.pages;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.asserts.SoftAssert;
-
+import org.apache.log4j.Logger;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+/**
+ *  This page is used for driver  and passing url
+ * author=Chandana
+ *
+ */
 
 public class BasePage  {
     public static WebDriver driver;
@@ -18,12 +27,9 @@ public class BasePage  {
     public  static WebDriverWait wait;
     public static SoftAssert softAssertion;
 
-    /**
-     * Usage: constructor to get data from file
-     * @author Chandana
-     */
 
     public  BasePage() {
+
         //Take data from Properties File
         try {
             prop = new Properties();
@@ -34,17 +40,14 @@ public class BasePage  {
         }
     }
 
-    /**
-     *  Usage: driver initilization
-     * author=Chandana
-     *
-     */
 
-    public static void initialize() {
+    @BeforeTest
+    //.static void
+    public void initialize() {
         //Initialize particular browser url according to the data given in Properties file
         String browserName = prop.getProperty("browser");
 
-        System.out.println(prop.getProperty("browser"));
+        prop.getProperty("browser");
         softAssertion = new SoftAssert();
 
         if (browserName.equals("chrome")) {
@@ -60,13 +63,20 @@ public class BasePage  {
 
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
-        driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(360, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
         wait =new WebDriverWait(driver,50);
 
         //and give url according to the data given in Properties file
         driver.get(prop.getProperty("url"));
 
+    }
+
+    @AfterTest
+    public void tearDown()
+    {
+        driver.close();
+        driver.quit();
     }
 
 

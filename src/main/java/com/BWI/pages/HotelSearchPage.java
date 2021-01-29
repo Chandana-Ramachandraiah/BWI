@@ -1,12 +1,18 @@
 package com.BWI.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
+
+/**
+ *  This page is used for elements in search hotel page
+ * author=Chandana
+ *
+ */
 public class HotelSearchPage extends BasePage{
 
     public HotelSearchPage() {
@@ -21,7 +27,7 @@ public class HotelSearchPage extends BasePage{
     @FindBy(css = "p#summary-checkout")
     private WebElement summaryCheckOutField;
 
-    @FindBy(css = "aspectMaintainer")
+    @FindBy(css = ".aspectMaintainer")
     private List<WebElement> hotelSearchCard;
 
     @FindBy(css = ".hotelName.hotelNameLink")
@@ -32,66 +38,48 @@ public class HotelSearchPage extends BasePage{
 
     @FindBy(id = "btn-modify-stay-update")
     private WebElement updateButton;
+    Reusable reuse = new Reusable();
 
-    /**usage: Taking destination summary.
-     * author= Chandana
-     * version 1.8.0_121
-     */
+    public String getTitle(){
+         return driver.getTitle();
+    }
+
     public String destinationSummary() {
-        System.out.println(destinationSummaryField.getText());
         return destinationSummaryField.getText();
+    }
 
+    public String getSummaryCheckin() {
+        return summaryCheckInField.getText();
     }
-    /**usage: Getting summary checkin.
-     * author= Chandana
-     * version 1.8.0_121
-     */
-    public WebElement getSummaryCheckin() {
-        return summaryCheckInField;
+
+    public String getSummaryCheckOut() {
+        return summaryCheckOutField.getText();
     }
-    /**usage: Getting summary checkout.
-     * author= Chandana
-     * version 1.8.0_121
-     */
-    public WebElement getSummaryCheckOut() {
-        return summaryCheckOutField;
-    }
-    /**usage: Getting total cards.
-     * author= Chandana
-     * version 1.8.0_121
-     */
+
     public int getHotelSearchCards() {
         //get cards
+        reuse.waitTillDocumentLoads();
         int count =hotelSearchCard.size();
         return count;
-
     }
-    /**usage: Getting hotel name.
-     * author= Chandana
-     * version 1.8.0_121
-     */
+
     public void getHotelName(){
         int count =hotelName.size();
         for(int i=0;i<count;i++)
         {
-            System.out.println("Hotels are "+hotelName.get(i).getText());
+            System.out.println("Hotel "+(i+1)+" is "+hotelName.get(i).getText());
         }
+        System.out.println(count);
 
     }
 
-    /**usage: To click on change search.
-     * author= Chandana
-     * version 1.8.0_121
-     */
-    public WebElement clickOnChangeSearch() {
-        return changeSearchButton;
+    public void clickOnChangeSearch() {
+        wait.until(ExpectedConditions.elementToBeClickable(changeSearchButton));
+        changeSearchButton.click();
     }
 
-    /**usage: To click on Update.
-     * author= Chandana
-     * version 1.8.0_121
-     */
     public void clickOnUpdate() {
+        wait.until(ExpectedConditions.elementToBeClickable(updateButton));
         updateButton.click();
 
     }

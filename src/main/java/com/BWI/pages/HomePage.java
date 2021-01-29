@@ -5,14 +5,17 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
+/**
+ *  This page is used for Initization of all homepage elements.
+ * author=Chandana
+ *
+ */
 public class HomePage extends BasePage {
-    /**
-     * Usage: constructor
-     * @author Chandana
-     */
+
     public HomePage() {
         PageFactory.initElements(driver, this);
     }
@@ -21,7 +24,7 @@ public class HomePage extends BasePage {
     private WebElement destinationInputTextBox;
 
     @FindBy(css = "input#checkin")
-    private WebElement checkin;
+    private WebElement checkIn;
 
     @FindBy(css = "td[data-handler='selectDay']")
     private List<WebElement> checkInDates;
@@ -53,11 +56,7 @@ public class HomePage extends BasePage {
     public String homePageTitle(){
        return driver.getTitle();
     }
-    /**
-     * Usage: to enter destination
-     * @author Chandana
-     * version 1.8.0_121
-     */
+
     public void enterDestinationInput(String destination) {
         destinationInputTextBox.clear();
         destinationInputTextBox.sendKeys(destination);
@@ -74,33 +73,22 @@ public class HomePage extends BasePage {
         }
 
 
+
     }
     
     public void ClickOnCheckIn() {
-        checkin.click();
+        checkIn.click();
     }
 
-    /**usage: for selecting month.
-     * author= Chandana
-     * @param month
-     * version 1.8.0_121
-     */
     public void selectMonth(String month)  {
         //click on next until you get desired month
        while(!checkInMonth.getText().contains(month)) {
-           try {
-               Thread.sleep(2000);
+            wait.until(ExpectedConditions.elementToBeClickable(next));
                next.click();
-           }catch(StaleElementReferenceException | InterruptedException e){
-               next.click();
-           }
+          // }
        }
     }
-    /**usage: for selecting month.
-     * author= Chandana
-     * @param date
-     * version 1.8.0_121
-     */
+
     public void selectDate(String date) {
         //Grab common attribute ,Put into list and iterate for seleting date
        int checkInDateSize = checkInDates.size();
@@ -113,36 +101,25 @@ public class HomePage extends BasePage {
         }
     }
 
-    /**usage: clicking on CheckOut.
-     * author= Chandana
-     *
-     * version 1.8.0_121
-     */
-    public void clickOnCheckout(){
-        try{
-            checkout.click();
-        }
-        catch(StaleElementReferenceException e){
-            checkout.click();
-        }
 
+    public void clickOnCheckOut(){
+            wait.until(ExpectedConditions.elementToBeClickable(checkout));
+            checkout.click();
     }
-    /**usage: clicking on CheckOut.
-     * author= Chandana
-     *
-     * version 1.8.0_121
-     */
+
     public void clickOnAccept() {
+        wait.until(ExpectedConditions.elementToBeClickable(checkout));
         accept.click();
 
     }
-    /**usage: returning webElement.
-     * author= Chandana
-     *
-     * version 1.8.0_121
-     */
-    public WebElement findMyHotel() {
-       return findMyHotelButton;
+
+    public String getHotelName() {
+        return findMyHotelButton.getText();
+    }
+
+    public void clickOnFindMyHotel() {
+        wait.until(ExpectedConditions.elementToBeClickable(checkout));
+        findMyHotelButton.click();
     }
 
 }

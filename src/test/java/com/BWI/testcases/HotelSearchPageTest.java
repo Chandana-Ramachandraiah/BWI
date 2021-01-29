@@ -1,30 +1,25 @@
 package com.BWI.testcases;
-
 import com.BWI.pages.HomePage;
 import com.BWI.pages.HotelSearchPage;
 import com.BWI.pages.Reusable;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
-import io.restassured.internal.support.FileReader;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import jdk.nashorn.internal.parser.JSONParser;
-import org.openqa.selenium.JavascriptExecutor;
-
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.List;
-
+/**
+ *  This page is used to writing testcase for HotelSearchPage
+ * @author=Chandana
+ *
+ */
 public class HotelSearchPageTest extends  HomePageTest {
     HotelSearchPage hotelSearch;
     HomePage homePage;
 
-    public static String destinationInputData;
-    public String checkInDate;
-    public String checkOutDate;
-    String sheetName = "Sheet1";
+    String sheetName = "Data";
 
     public HotelSearchPageTest() {
         super();
@@ -47,11 +42,14 @@ public class HotelSearchPageTest extends  HomePageTest {
     //Create object of class
         hotelSearch = new HotelSearchPage();
         homePage = new HomePage();
-        Reusable verify = new Reusable();
+        reusable = new Reusable();
 
+        //Verifing the title
+        String titleOfPage=hotelSearch.getTitle();
+        Assert.assertEquals(titleOfPage,"Search Best Western Hotels & Resorts");
         //verify cards are present
-        int count;
-        count=hotelSearch.getHotelSearchCards();
+
+        int count=hotelSearch.getHotelSearchCards();
         if (count>0) {
             System.out.println("Hotel Cards Displayed");
 
@@ -59,22 +57,23 @@ public class HotelSearchPageTest extends  HomePageTest {
             System.out.println("please change you search");
         }
 
-        hotelSearch.clickOnChangeSearch().click();
+        hotelSearch.clickOnChangeSearch();
         homePage.enterDestinationInput(destination);
         //select date for checkin
        homePage.ClickOnCheckIn();
         homePage.selectMonth(CheckinDate1[1]);
         homePage.selectDate(CheckinDate1[0]);
         //select date for checkin
-         homePage.clickOnCheckout();
+         homePage.clickOnCheckOut();
         homePage.selectMonth(CheckoutDate1[1]);
         homePage.selectDate(CheckoutDate1[0]);
         hotelSearch.clickOnUpdate();
 
         //wait till document is ready.
-        wait.until( webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
+        reusable.waitTillDocumentLoads();
         //Verify destination after changing.
-        verify.verifyDestinationAndDates(destination,checkInDate,checkOutDate);
+        reusable.verifyDestinationAndDates(destination,checkInDate,checkOutDate);
+
         //Printing hotelNames
         hotelSearch.getHotelName();
 
@@ -84,10 +83,8 @@ public class HotelSearchPageTest extends  HomePageTest {
         RestAssured.baseURI="https://www.bestwestern.com/bin/bestwestern/proxy?gwServiceURL=HOTEL_SEARCH&distance=50&depth=2&checkinDate=2021-02-20&checkoutDate=2021-02-23&latitude=41.8781136&longitude=-87.6297982&numberOfRooms=1&occupant=numAdults:1,numChild:0&chain=BW&chain=UR&chain=PB&chain=XW";
         //Request
         driver.navigate().refresh();
-        ///bin/bestwestern/proxy?gwServiceURL=HOTEL_SEARCH&distance=50&depth=2&checkinDate=2021-02-23&checkoutDate=2021-02-27";
         RequestSpecification requestHit= RestAssured.given();
-        //=============== Get method ========================================
-      //Response
+
         Response response= requestHit.request(Method.GET);
         requestHit.header("Content-Type", "application/json;charset=utf-8");
         //See Response body
@@ -103,7 +100,7 @@ public class HotelSearchPageTest extends  HomePageTest {
 
         //Get values from Response
         int statusCode= response.getStatusCode();
-        System.out.println("Response code is "+ statusCode);
+       System.out.println("Response code is "+ statusCode);
 
     }
 
