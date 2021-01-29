@@ -6,13 +6,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
 /**
- *  This page is used for Initization of all homepage elements.
- * author=Chandana
- *
+ *  This page is used for Initiation of all homepage elements.
+ * @author Chandana
+ * @version 1.0
+ * @since 28-01-2021
  */
 public class HomePage extends BasePage {
 
@@ -36,7 +38,7 @@ public class HomePage extends BasePage {
     private WebElement next;
 
     @FindBy(css = "input#checkout")
-    private WebElement checkout;
+    private WebElement checkOut;
 
     @FindBy(css = "td[data-handler='selectDay']")
     private List<WebElement> checkOutDates;
@@ -52,28 +54,24 @@ public class HomePage extends BasePage {
 
     @FindBy(id = "btn-modify-stay-update")
     private WebElement findMyHotelButton;
-
     public String homePageTitle(){
        return driver.getTitle();
     }
-
+    WebDriverWait wait =new WebDriverWait(driver,120);
     public void enterDestinationInput(String destination) {
         destinationInputTextBox.clear();
         destinationInputTextBox.sendKeys(destination);
         WebElement autoSuggestiveDestination;
 
-        try{
-             autoSuggestiveDestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
+       try{
+           autoSuggestiveDestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
+           autoSuggestiveDestination.click();
+       }
+       catch(StaleElementReferenceException e){
+           autoSuggestiveDestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
+           autoSuggestiveDestination.click();
 
-            autoSuggestiveDestination.click();
-
-        }catch(StaleElementReferenceException e) {
-             autoSuggestiveDestination=driver.findElement(By.xpath("//ul[@id='google-suggestions']//li[@data-place='" + destination + "']"));
-            autoSuggestiveDestination.click();
-        }
-
-
-
+       }
     }
     
     public void ClickOnCheckIn() {
@@ -85,12 +83,11 @@ public class HomePage extends BasePage {
        while(!checkInMonth.getText().contains(month)) {
             wait.until(ExpectedConditions.elementToBeClickable(next));
                next.click();
-          // }
        }
     }
 
     public void selectDate(String date) {
-        //Grab common attribute ,Put into list and iterate for seleting date
+        //Grab common attribute ,Put into list and iterate for selecting date
        int checkInDateSize = checkInDates.size();
        for (int i = 0; i < checkInDateSize; i++) {
             String text = checkInDates.get(i).getText();
@@ -101,14 +98,13 @@ public class HomePage extends BasePage {
         }
     }
 
-
     public void clickOnCheckOut(){
-            wait.until(ExpectedConditions.elementToBeClickable(checkout));
-            checkout.click();
+            wait.until(ExpectedConditions.elementToBeClickable(checkOut));
+            checkOut.click();
     }
 
     public void clickOnAccept() {
-        wait.until(ExpectedConditions.elementToBeClickable(checkout));
+        wait.until(ExpectedConditions.elementToBeClickable(checkOut));
         accept.click();
 
     }
@@ -118,7 +114,7 @@ public class HomePage extends BasePage {
     }
 
     public void clickOnFindMyHotel() {
-        wait.until(ExpectedConditions.elementToBeClickable(checkout));
+        wait.until(ExpectedConditions.elementToBeClickable(checkOut));
         findMyHotelButton.click();
     }
 

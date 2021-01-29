@@ -10,8 +10,9 @@ import java.util.List;
 
 /**
  *  This page is used for elements in search hotel page
- * author=Chandana
- *
+ * @author Chandana
+ * @version 1.0
+ * @since 28-01-2021
  */
 public class HotelSearchPage extends BasePage{
 
@@ -38,6 +39,7 @@ public class HotelSearchPage extends BasePage{
 
     @FindBy(id = "btn-modify-stay-update")
     private WebElement updateButton;
+
     Reusable reuse = new Reusable();
 
     public String getTitle(){
@@ -69,7 +71,7 @@ public class HotelSearchPage extends BasePage{
         {
             System.out.println("Hotel "+(i+1)+" is "+hotelName.get(i).getText());
         }
-        System.out.println(count);
+        System.out.println("Number of hotels are "+count);
 
     }
 
