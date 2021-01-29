@@ -4,19 +4,12 @@ import com.BWI.pages.BasePage;
 import com.BWI.pages.HomePage;
 import com.BWI.pages.Reusable;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class HomePageTest extends BasePage {
-    public static String  destinationinputdata;
-    public String checkindate;
-    public String checkoutdate;
-    String sheetName = "InputData";
+    String sheetName = "Sheet1";
     //UpdateInputData
 
 
@@ -25,15 +18,22 @@ public class HomePageTest extends BasePage {
     }
     HomePage homepage;
 
-    @DataProvider
+    @DataProvider(name="getBWITestData",indices = {0})
     public Object[][] getBWITestData(){
         Object data[][] = Reusable.getTestData(sheetName);
         return data;
     }
+
+    /**
+     * author=Chandana
+     * @param destination
+     * @param checkInDate
+     * @param checkOutDate
+     */
     @Test(priority = 0,dataProvider="getBWITestData")
-    public void BWITestmethod(String destination,String CheckinDate, String CheckoutDate) {
-        String[] CheckinDate1= Reusable.splitfunction(CheckinDate);
-        String[] CheckoutDate1= Reusable.splitfunction(CheckoutDate);
+    public void BWITestMethod(String destination, String checkInDate, String checkOutDate) {
+        String[] CheckinDate1= Reusable.splitFunction(checkInDate);
+        String[] CheckoutDate1= Reusable.splitFunction(checkOutDate);
         HomePage.initialize();
         wait.until(
                 webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
@@ -41,23 +41,27 @@ public class HomePageTest extends BasePage {
         String getTitle= homepage.homePageTitle();
 
         Assert.assertEquals(getTitle,"Book Direct at Best Western Hotels & Resorts");
-        destinationinputdata= homepage.enterDestinationInput(destination);
+        homepage.enterDestinationInput(destination);
 
-        WebElement checkinDatefield = homepage.ClickOnCheckIn();
-       checkindate=checkinDatefield.getText();
+        homepage.ClickOnCheckIn();
+
         homepage.selectMonth(CheckinDate1[1]);
-        homepage.selectdate(CheckinDate1[0]);
+        homepage.selectDate(CheckinDate1[0]);
 
-        WebElement checkoutdatefield = homepage.clickOnCheckout();
-        checkoutdate=checkoutdatefield.getText();
+        homepage.clickOnCheckout();
+
         homepage.selectMonth(CheckoutDate1[1]);
-        homepage.selectdate(CheckoutDate1[0]);
-        String testoffindmyhotel = homepage.findmyhotel().getText();
+        homepage.selectDate(CheckoutDate1[0]);
+        String testOfFindMyHotel = homepage.findMyHotel().getText();
         homepage.clickOnAccept();
 
-        Assert.assertEquals(testoffindmyhotel,"FIND MY HOTEL");
+        Assert.assertEquals(testOfFindMyHotel,"FIND MY HOTEL");
+        homepage.findMyHotel().click();
 
-        homepage.findmyhotel().click();
+        Reusable verify = new Reusable();
+
+        verify.verifyDestinationAndDates(destination,checkInDate,checkOutDate);
+
 
 
 

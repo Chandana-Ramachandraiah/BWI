@@ -1,85 +1,114 @@
 package com.BWI.testcases;
 
-import com.BWI.pages.BasePage;
 import com.BWI.pages.HomePage;
 import com.BWI.pages.HotelSearchPage;
 import com.BWI.pages.Reusable;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
-import org.testng.annotations.BeforeMethod;
+import io.restassured.RestAssured;
+import io.restassured.http.Method;
+import io.restassured.internal.support.FileReader;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import jdk.nashorn.internal.parser.JSONParser;
+import org.openqa.selenium.JavascriptExecutor;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 public class HotelSearchPageTest extends  HomePageTest {
-    HotelSearchPage hotelsearch;
-    HomePage homepage;
-    public static String  destinationinputdata;
-    public String checkindate;
-    public String checkoutdate;
-    String sheetName = "InputData";
+    HotelSearchPage hotelSearch;
+    HomePage homePage;
+
+    public static String destinationInputData;
+    public String checkInDate;
+    public String checkOutDate;
+    String sheetName = "Sheet1";
+
     public HotelSearchPageTest() {
         super();
-
     }
+    @DataProvider(name="getBWITestDataUpdate",indices = {1})
+    public Object[][] getBWITestDataUpdate(){
+        Object data[][] = Reusable.getTestData(sheetName);
+        return data;
+    }
+    /**
+     * @param destination
+     * @param checkInDate
+     * @param checkOutDate
+     */
+    @Test(priority = 1,dataProvider="getBWITestDataUpdate")
+    public void findHotel(String destination, String checkInDate, String checkOutDate) {
+    //Take data from excel and split
+        String[] CheckinDate1= Reusable.splitFunction(checkInDate);
+        String[] CheckoutDate1= Reusable.splitFunction(checkOutDate);
+    //Create object of class
+        hotelSearch = new HotelSearchPage();
+        homePage = new HomePage();
+        Reusable verify = new Reusable();
 
-
-    @Test(priority = 1)
-    public void findHotel() throws InterruptedException {
-        hotelsearch = new HotelSearchPage();
-        homepage = new HomePage();
-        HotelSearchPageTest verify = new HotelSearchPageTest();
-        verify.verifyDestinationandDates();
-        
-
-        if (hotelsearch.getHotelSearchcard().isDisplayed()) {
-            System.out.println("yeah displayed");
+        //verify cards are present
+        int count;
+        count=hotelSearch.getHotelSearchCards();
+        if (count>0) {
+            System.out.println("Hotel Cards Displayed");
 
         } else {
             System.out.println("please change you search");
         }
 
-        hotelsearch.clickOnChangeSearch().click();
-        homepage.enterDestinationInput("Ustroń, Poland");
+        hotelSearch.clickOnChangeSearch().click();
+        homePage.enterDestinationInput(destination);
+        //select date for checkin
+       homePage.ClickOnCheckIn();
+        homePage.selectMonth(CheckinDate1[1]);
+        homePage.selectDate(CheckinDate1[0]);
+        //select date for checkin
+         homePage.clickOnCheckout();
+        homePage.selectMonth(CheckoutDate1[1]);
+        homePage.selectDate(CheckoutDate1[0]);
+        hotelSearch.clickOnUpdate();
 
-        WebElement checkinDatefield = homepage.ClickOnCheckIn();
-        checkindate = checkinDatefield.getText();
-        homepage.selectMonth("May");
-        homepage.selectdate("28");
+        //wait till document is ready.
+        wait.until( webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
+        //Verify destination after changing.
+        verify.verifyDestinationAndDates(destination,checkInDate,checkOutDate);
+        //Printing hotelNames
+        hotelSearch.getHotelName();
 
-        WebElement checkoutdatefield = homepage.clickOnCheckout();
-        checkoutdate = checkoutdatefield.getText();
-        homepage.selectMonth("June");
-        homepage.selectdate("1");
-        hotelsearch.clickOnUpdate();
-        verify.verifyDestinationandDates();
+        softAssertion.assertAll();
+        //===========Rest Assured==============
+        //base URI
+        RestAssured.baseURI="https://www.bestwestern.com/bin/bestwestern/proxy?gwServiceURL=HOTEL_SEARCH&distance=50&depth=2&checkinDate=2021-02-20&checkoutDate=2021-02-23&latitude=41.8781136&longitude=-87.6297982&numberOfRooms=1&occupant=numAdults:1,numChild:0&chain=BW&chain=UR&chain=PB&chain=XW";
+        //Request
+        driver.navigate().refresh();
+        ///bin/bestwestern/proxy?gwServiceURL=HOTEL_SEARCH&distance=50&depth=2&checkinDate=2021-02-23&checkoutDate=2021-02-27";
+        RequestSpecification requestHit= RestAssured.given();
+        //=============== Get method ========================================
+      //Response
+        Response response= requestHit.request(Method.GET);
+        requestHit.header("Content-Type", "application/json;charset=utf-8");
+        //See Response body
 
+        String responseBody= response.getBody().asString();
 
+       /* // parsing file "JSONExample.json"
+        Object obj = new JSONParser().parse(new FileReader("response.getBody()"));
 
-        //softassertion.assertAll();
+        // typecasting obj to JSONObject
+        JSONObject jo = (JSONObject) obj;
+        JsonPath j1= new JsonPath(response.getBody());*/
+
+        //Get values from Response
+        int statusCode= response.getStatusCode();
+        System.out.println("Response code is "+ statusCode);
 
     }
 
-    public void verifyDestinationandDates() {
 
-        hotelsearch = new HotelSearchPage();
-        homepage = new HomePage();
-        String destinationsummary = hotelsearch.destinationSummary();
-        System.out.println(destinationsummary);
-        softassertion.assertEquals(destinationsummary, destinationinputdata);
-        System.out.println(destinationsummary);
-        String summarycheckin = hotelsearch.getsummaryCheckin().getText();
-        try {
-            softassertion.assertEquals(summarycheckin, checkindate);
 
-        } catch (
-                Error e) {
-            softassertion.assertAll();
-        }
-
-        String summarycheckout = hotelsearch.getsummaryCheckin().getText();
-        softassertion.assertEquals(summarycheckout, checkoutdate);
-    }
 }
 
 

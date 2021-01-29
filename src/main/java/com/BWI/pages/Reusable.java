@@ -1,10 +1,7 @@
 package com.BWI.pages;
-
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -15,6 +12,8 @@ public class Reusable extends BasePage {
 
     static Workbook book;
     static Sheet sheet;
+    HotelSearchPage hotelSearch;
+    HomePage homePage;
 
     public static Object[][] getTestData(String sheetName) {
         FileInputStream file = null;
@@ -41,7 +40,7 @@ public class Reusable extends BasePage {
         return data;
     }
 
-    public static String[] splitfunction(String splitDate){
+    public static String[] splitFunction(String splitDate){
         String strMain = splitDate;
         String[] arrSplit = strMain.split("-");
         for (int i=0; i < arrSplit.length; i++)
@@ -49,5 +48,26 @@ public class Reusable extends BasePage {
             System.out.println(arrSplit[i]);
         }
         return arrSplit;
+    }
+
+    /** Verify destination and dates common method
+     * @param destination
+     * @param CheckInDate
+     * @param CheckOutDate
+     */
+    public void verifyDestinationAndDates(String destination, String CheckInDate, String CheckOutDate) {
+
+        hotelSearch = new HotelSearchPage();
+        homePage = new HomePage();
+
+        String destinationSummary = hotelSearch.destinationSummary();
+        softAssertion.assertEquals(destinationSummary, destination);
+
+        String summaryCheckin = hotelSearch.getSummaryCheckin().getText();
+        softAssertion.assertEquals(summaryCheckin, CheckInDate);
+
+
+        String summaryCheckout = hotelSearch.getSummaryCheckOut().getText();
+        softAssertion.assertEquals(summaryCheckout, CheckOutDate);
     }
 }
