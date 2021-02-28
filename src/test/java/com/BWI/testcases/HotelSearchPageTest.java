@@ -1,14 +1,14 @@
 package com.BWI.testcases;
+
 import com.BWI.pages.HomePage;
 import com.BWI.pages.HotelSearchPage;
 import com.BWI.pages.Reusable;
-import io.restassured.RestAssured;
-import io.restassured.http.Method;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Optional;
 
 /**
  * @author Chandana
@@ -20,6 +20,9 @@ public class HotelSearchPageTest extends  HomePageTest {
     HomePage homePage;
 
     String sheetName = "Data";
+
+
+    final static String PROJECT_PATH = System.getProperty("user.dir");
 
     public HotelSearchPageTest() {
         super();
@@ -36,20 +39,20 @@ public class HotelSearchPageTest extends  HomePageTest {
      */
     @Test(priority = 1,dataProvider="getBWITestDataUpdate")
     public void findHotel(String destination, String checkInDate, String checkOutDate) {
-    //Take data from excel and split
-        String[] CheckinDate1= Reusable.splitFunction(checkInDate);
-        String[] CheckoutDate1= Reusable.splitFunction(checkOutDate);
-    //Create object of class
+        //Take data from excel and split
+        String[] CheckinDate1 = Reusable.splitFunction(checkInDate);
+        String[] CheckoutDate1 = Reusable.splitFunction(checkOutDate);
+        //Create object of class
         hotelSearch = new HotelSearchPage();
         homePage = new HomePage();
         reusable = new Reusable();
 
         //Verifying the title
-        String titleOfPage=hotelSearch.getTitle();
-        Assert.assertEquals(titleOfPage,"Search Best Western Hotels & Resorts");
+        String titleOfPage = hotelSearch.getTitle();
+        Assert.assertEquals(titleOfPage, "Search Best Western Hotels & Resorts");
         //verify cards are present
-        int count=hotelSearch.getHotelSearchCards();
-        if (count>0) {
+        int count = hotelSearch.getHotelSearchCards();
+        if (count > 0) {
             System.out.println("Hotel Cards Displayed");
 
         } else {
@@ -59,11 +62,11 @@ public class HotelSearchPageTest extends  HomePageTest {
         hotelSearch.clickOnChangeSearch();
         homePage.enterDestinationInput(destination);
         //select date for checkin
-       homePage.ClickOnCheckIn();
+        homePage.ClickOnCheckIn();
         homePage.selectMonth(CheckinDate1[1]);
         homePage.selectDate(CheckinDate1[0]);
         //select date for checkout
-         homePage.clickOnCheckOut();
+        homePage.clickOnCheckOut();
         homePage.selectMonth(CheckoutDate1[1]);
         homePage.selectDate(CheckoutDate1[0]);
         hotelSearch.clickOnUpdate();
@@ -71,14 +74,14 @@ public class HotelSearchPageTest extends  HomePageTest {
         //wait till document is ready.
         reusable.waitTillDocumentLoads();
         //Verify destination after changing.
-        reusable.verifyDestinationAndDates(destination,checkInDate,checkOutDate);
+        reusable.verifyDestinationAndDates(destination, checkInDate, checkOutDate);
 
         //Printing hotelNames
         hotelSearch.getHotelName();
 
         softAssertion.assertAll();
         //===========Rest Assured==============
-        //base URI
+  /*      //base URI
         RestAssured.baseURI="https://www.bestwestern.com/bin/bestwestern/proxy?gwServiceURL=HOTEL_SEARCH&distance=50&depth=2&checkinDate=2021-02-20&checkoutDate=2021-02-23&latitude=41.8781136&longitude=-87.6297982&numberOfRooms=1&occupant=numAdults:1,numChild:0&chain=BW&chain=UR&chain=PB&chain=XW";
         //Request
         driver.navigate().refresh();
@@ -93,10 +96,10 @@ public class HotelSearchPageTest extends  HomePageTest {
         int statusCode= response.getStatusCode();
        System.out.println("Response code is "+ statusCode);
 
+    }*/
+        //DevTools devTools=((ChromiumDriver) driver).getDevTools();
+
     }
-
-
-
 }
 
 
